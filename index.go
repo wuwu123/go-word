@@ -11,6 +11,7 @@ import (
 	"github.com/axgle/mahonia"
 	"io/ioutil"
 	"sort"
+	"time"
 )
 
 // 字符转码
@@ -57,7 +58,7 @@ func GetFileContent(fileName string) string {
 	return ""
 }
 func WriteIndex(allTest map[int]string) {
-	outputFile, outputError := os.OpenFile("./text/index.text", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
+	outputFile, outputError := os.OpenFile("./text/index.md", os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0600)
 	if outputError != nil {
 		fmt.Printf("An error occurred with file opening or creation\n")
 		return
@@ -88,13 +89,13 @@ func GetBody(title string, url string, ch chan<- string) {
 		ch <- fmt.Sprintf("demo错误 %s", err.Error())
 		return
 	}
-	WriteFile(title, title+"\r\n"+GbkToUtf(doc.Find("#content").Text()))
+	WriteFile(title, "##"+title+"\r\n"+GbkToUtf(doc.Find("#content").Text()))
 	ch <- title
 }
 
 func GetMenu() {
 	baseUrl := "http://www.126shu.com"
-	res, err := http.Get(baseUrl + "/15/")
+	res, err := http.Get(baseUrl + "/1761/")
 	if err != nil {
 		fmt.Println("获取数据", err.Error())
 		return
@@ -132,5 +133,8 @@ func GetMenu() {
 }
 
 func main() {
+	begin := time.Now().Unix()
 	GetMenu()
+	end := time.Now().Unix()
+	fmt.Println(end-begin)
 }
